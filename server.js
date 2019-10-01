@@ -1,6 +1,8 @@
 // Get our dependencies
 var express = require('express');
 var app = express();
+var dotenv = require('dotenv');
+dotenv.config();
 var mysql = require("mysql");
 var connection = mysql.createConnection({
   host     : process.env.DB_HOST || 'mysql-test.cxrpknmq0hfi.us-west-2.rds.amazonaws.com',

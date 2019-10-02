@@ -1,6 +1,7 @@
 // Get our dependencies
 var express = require('express');
 var app = express();
+var request = require('superagent');
 var dotenv = require('dotenv');
 dotenv.config();
 var mysql = require("mysql");
@@ -98,6 +99,19 @@ app.get('/pending', function(req, res){
   ]
   res.json(pending);
 })
+
+app.get('/info', function(req, res){
+  request
+    .get('http://169.254.169.254/latest/meta-data/local-ipv4')
+    .end(function(err, data) {
+      if(data.status == 403){
+        res.send(403, '403 Forbidden');
+      } else {
+        res.json(data);
+      }
+    })
+})
+
 console.log("server listening through port: " + process.env.APP_PORT || 3000);
 // Launch our API Server and have it listen on port 3000.
 app.listen(process.env.APP_PORT || 3000);

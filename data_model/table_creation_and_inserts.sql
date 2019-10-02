@@ -18,7 +18,7 @@ INSERT INTO movie_db.reviewer (name, avatar, publication) VALUES ('Mindy Lee','h
 INSERT INTO movie_db.reviewer (name, avatar, publication) VALUES ('Martin Thomas','https://s3.amazonaws.com/uifaces/faces/twitter/karsh/128.jpg','TheOne');
 INSERT INTO movie_db.reviewer (name, avatar, publication) VALUES ('Anthony Miller','https://s3.amazonaws.com/uifaces/faces/twitter/9lessons/128.jpg','ComicBookHero.com');
 
-INSERT INTO movie_db.moviereview (title, `release`, score, reviewer) VALUES ('Deadpool', '2016', 11, 'Robert Smith');
+INSERT INTO movie_db.moviereview (title, `release`, score, reviewer) VALUES ('Deadpool', '2016', 9, 'Robert Smith');
 INSERT INTO movie_db.moviereview (title, `release`, score, reviewer) VALUES ('Thor: Ragnarok', '2017', 7, 'Chris Harris');
 INSERT INTO movie_db.moviereview (title, `release`, score, reviewer) VALUES ('It', '2017', 8, 'Janet Garcia');
 INSERT INTO movie_db.moviereview (title, `release`, score, reviewer) VALUES ('Dunkirk', '2017', 8, 'Andrew West');

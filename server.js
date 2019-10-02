@@ -5,24 +5,25 @@ var request = require('superagent');
 var dotenv = require('dotenv');
 dotenv.config();
 var mysql = require("mysql");
-var connection = mysql.createConnection({
+var pool = mysql.createPool({
+  connectionLimit : 100,
   host     : process.env.DB_HOST || 'mysql-test.cxrpknmq0hfi.us-west-2.rds.amazonaws.com',
   user     : process.env.DB_USER || 'applicationuser',
   password : process.env.DB_PASS || 'applicationuser',
   database : process.env.DB_NAME || 'movie_db'
 });
 
-connection.connect((err) => {
+/* connection.connect((err) => {
   if(err){
     console.log('Error connecting to Db');
     console.log(JSON.stringify(err, Object.getOwnPropertyNames(err)));
     return;
   }
   console.log('Connection established');
-});
+}); */
 
 function getMovies(callback) {    
-  connection.query("SELECT * FROM movie_db.moviereview",
+  pool.query("SELECT * FROM movie_db.moviereview",
     function (err, rows) {
       callback(err, rows); 
     }
@@ -30,7 +31,7 @@ function getMovies(callback) {
 }
 
 function getAuthors(callback) {    
-  connection.query("SELECT * FROM movie_db.reviewer",
+  pool.query("SELECT * FROM movie_db.reviewer",
     function (err, rows) {
       callback(err, rows); 
     }
@@ -38,7 +39,7 @@ function getAuthors(callback) {
 }
 
 function getPublications(callback) {    
-  connection.query("SELECT * FROM movie_db.publication",
+  pool.query("SELECT * FROM movie_db.publication",
     function (err, rows) {
       callback(err, rows); 
     }

@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/jyepesr1/movie-analyst-api/tree/master.svg?style=svg)](https://circleci.com/gh/jyepesr1/movie-analyst-api/tree/master)
+
 # movie-analyst-api
 API for the movie analyst application of the jenkins ramp up
 

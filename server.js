@@ -108,7 +108,7 @@ app.get('/info', function(req, res){
       if(data.status == 403){
         res.send(403, '403 Forbidden');
       } else {
-        res.json(data);
+        res.json(data.text);
       }
     })
 })

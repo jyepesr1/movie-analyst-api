@@ -4,17 +4,21 @@
     "express": "^4.17.1",
     "mysql": "^2.17.1",
     "pm2": "^3.5.1",
-    "superagent": "^5.1.0"
+    "superagent": "^5.1.0",
+    "snyk": "^1.230.5"
   },
   "scripts": {
     "start": "pm2 start server.js",
     "dev": "nodemon server.js",
-    "test": "mocha --exit"
+    "test": "mocha --exit",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^6.2.1",
     "nodemon": "^1.19.3"
-  }
+  },
+  "snyk": true
 }

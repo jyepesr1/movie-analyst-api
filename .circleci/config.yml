@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build:
+  build_and_Save:
     docker:
       # specify the version you desire here
       - image: circleci/node:12.10
@@ -29,6 +29,7 @@ jobs:
           command: yarn test
       - run: 
           name: Create the artifact
-          command: zip -r /tmp/movie_analyst-api-${CIRCLE_SHA1}.zip ~/movie-analyst-api
+          command: zip -r /tmp/movie_analyst-api-${CIRCLE_SHA1}.zip ~/movie-analyst-api -x ".git/*"
       - store_artifacts:
           path: /tmp/movie_analyst-api-${CIRCLE_SHA1}.zip
+          destination: movie_analyst-api-${CIRCLE_SHA1}.zip

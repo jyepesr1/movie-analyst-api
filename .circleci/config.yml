@@ -16,8 +16,8 @@ jobs:
     steps:
       - setup_remote_docker
       - run:
-        name: Build Docker image
-        command: docker build -t $IMAGE_NAME:latest .
+          name: Build Docker image
+          command: docker build -t $IMAGE_NAME:latest .
       - clair_scanner/scan:
           image: $IMAGE_NAME:latest
       - snyk/scan:

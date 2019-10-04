@@ -42,7 +42,7 @@ jobs:
     environment:
       IMAGE_NAME: movie-analyst/api
     steps:
-      - attach_workspace
+      - attach_workspace:
           at: .
       # Download and cache dependencies
       - restore_cache:

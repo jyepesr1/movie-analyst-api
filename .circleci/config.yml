@@ -6,8 +6,27 @@ version: 2.1
 
 orbs:
   snyk: snyk/snyk@0.0.8
+  clair_scanner: ovotech/clair-scanner@1.5.0
 
 jobs:
+  scan_image:
+    executor: clair_scanner/default
+    environment:
+      IMAGE_NAME: movie-analyst/api
+    steps:
+      - setup_remote_docker
+      - run:
+        name: Build Docker image
+        command: docker build -t $IMAGE_NAME:latest .
+      - clair_scanner/scan:
+          image: $IMAGE_NAME:latest
+      - snyk/scan:
+          docker-image-name: '$IMAGE_NAME:latest'
+          fail-on-issues: false
+          monitor-on-build: true
+          project: '${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-container'
+          target-file: Dockerfile
+          token-variable: SNYK_TOKEN
   app-build:
     docker:
       # specify the version you desire here
@@ -22,13 +41,6 @@ jobs:
       - run:
           name: Build Docker image
           command: docker build -t $IMAGE_NAME:latest .
-      - snyk/scan:
-          docker-image-name: '$IMAGE_NAME:latest'
-          fail-on-issues: false
-          monitor-on-build: true
-          project: '${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-container'
-          target-file: Dockerfile
-          token-variable: SNYK_TOKEN
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
@@ -51,11 +63,13 @@ jobs:
           command: yarn test
       - run: 
           name: Create the artifact
-          command: zip -r /tmp/movie_analyst-api-${CIRCLE_SHA1}.zip ~/movie-analyst-api -x ".git/*"
+          command: zip -r /tmp/movie_analyst-api-${CIRCLE_SHA1}.zip node_modules/ server.js package.json
 
 workflows:
   version: 2.1
   main:
     jobs:
+      - scan_image
       - app-build:
-          context: snyk
+          requires: scan_image
+    context: snyk

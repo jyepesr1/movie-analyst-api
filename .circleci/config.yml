@@ -71,5 +71,6 @@ workflows:
     jobs:
       - scan_image
       - app-build:
-          requires: scan_image
+          requires:
+            - scan_image
     context: snyk

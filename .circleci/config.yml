@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build_and_Save:
+  build_and_save:
     docker:
       # specify the version you desire here
       - image: circleci/node:12.10
@@ -33,3 +33,9 @@ jobs:
       - store_artifacts:
           path: /tmp/movie_analyst-api-${CIRCLE_SHA1}.zip
           destination: movie_analyst-api-${CIRCLE_SHA1}.zip
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build_and_save

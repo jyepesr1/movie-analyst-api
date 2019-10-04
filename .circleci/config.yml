@@ -5,28 +5,21 @@
 version: 2.1
 
 orbs:
-  snyk: snyk/snyk@0.0.8
+  anchore: anchore/anchore-engine@1.6.0
 
 jobs:
   scan_image:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:12.10
-    environment:
-      IMAGE_NAME: movie-analyst/api
+    executor: anchore/anchore_engine
     steps:
       - checkout
-      - setup_remote_docker
       - run:
-          name: Build Docker image
-          command: docker build -t $IMAGE_NAME:latest .
-      - snyk/scan:
-          docker-image-name: '$IMAGE_NAME:latest'
-          fail-on-issues: false
-          monitor-on-build: true
-          project: '${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-container'
-          target-file: Dockerfile
-          token-variable: SNYK_TOKEN
+        name: Build container
+        command: docker build -t ${CIRCLE_PROJECT_REPONAME}:dev .
+      - anchore/analyze_local_image:
+          dockerfile_path: ./Dockerfile
+          image_name: ${CIRCLE_PROJECT_REPONAME}:dev
+          timeout: '500'
+          policy_failure: True  
       - persist_to_workspace:
           root: .
           paths:

@@ -33,6 +33,7 @@ jobs:
             - server.js 
             - package.json
             - test/*
+            - yarn.lock
   app-build:
     docker:
       # specify the version you desire here

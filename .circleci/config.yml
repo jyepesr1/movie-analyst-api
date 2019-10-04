@@ -5,14 +5,14 @@
 version: 2.1
 
 orbs:
-  microscanner: aquasecurity/microscanner@dev:0.0.1
+  microscanner: aquasecurity/microscanner@dev:0.1.6
 
 jobs:
   docker-build:
     executor: microscanner/default
     steps:
       - checkout
-      - run: docker build -t circleci/node:latest .
+      - run: docker build -t movie-analyst/api:latest .
 
   app-build:
     docker:
@@ -50,4 +50,4 @@ workflows:
           requires:
             - docker-build
           context: microscanner
-          image: circleci/node:latest
+          image: movie-analyst/api:latest

@@ -5,7 +5,7 @@
 version: 2.1
 
 orbs:
-  microscanner: aquasecurity/microscanner@dev:0.1.6
+  microscanner: aquasecurity/microscanner@0.1.6
 
 jobs:
   docker-build:

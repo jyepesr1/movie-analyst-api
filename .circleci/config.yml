@@ -5,23 +5,30 @@
 version: 2.1
 
 orbs:
-  microscanner: aquasecurity/microscanner@0.1.6
+  snyk: snyk/snyk@0.0.8
 
 jobs:
-  docker-build:
-    executor: microscanner/default
-    steps:
-      - checkout
-      - run: docker build -t movie-analyst/api:latest .
-
   app-build:
     docker:
       # specify the version you desire here
       - image: circleci/node:12.10
     working_directory: ~/movie-analyst-api
+    environment:
+      IMAGE_NAME: movie-analyst/api
     steps:
       - checkout  
       # Download and cache dependencies
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t $IMAGE_NAME:latest .
+      - snyk/scan:
+          docker-image-name: '$IMAGE_NAME:latest'
+          fail-on-issues: false
+          monitor-on-build: true
+          project: '${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-container'
+          target-file: Dockerfile
+          token-variable: SNYK_TOKEN
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
@@ -43,11 +50,7 @@ jobs:
 
 workflows:
   version: 2.1
-  scan-image:
+  main:
     jobs:
-      - docker-build
-      - microscanner/scan-image:
-          requires:
-            - docker-build
-          context: microscanner
-          image: movie-analyst/api:latest
+      - app-build
+        context: snyk

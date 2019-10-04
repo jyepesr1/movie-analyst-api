@@ -17,12 +17,12 @@ jobs:
           name: Build container
           command: |
             apk add --update-cache --upgrade curl
-            docker build -t ${CIRCLE_PROJECT_REPONAME}:dev .
+            docker build -t ${CIRCLE_PROJECT_REPONAME}: ${CIRCLE_BRANCH} .
       - anchore/analyze_local_image:
           dockerfile_path: ./Dockerfile
-          image_name: ${CIRCLE_PROJECT_REPONAME}:dev
+          image_name: ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
           timeout: '500'
-          policy_failure: true  
+          policy_failure: false  
       - persist_to_workspace:
           root: .
           paths:
@@ -58,7 +58,11 @@ jobs:
           command: yarn test
       - run: 
           name: Create the artifact
-          command: zip -r /tmp/movie_analyst-api-${CIRCLE_SHA1}.zip node_modules/ server.js package.json
+          command: |
+          mkdir /tmp/artifact
+          zip -r /tmp/artifact/${CIRCLE_PROJECT_REPONAME}-${CIRCLE_SHA1}.zip node_modules/ server.js package.json yarn.lock
+      - store_artifacts:
+          path: /tmp/artifact
 
 workflows:
   version: 2.1

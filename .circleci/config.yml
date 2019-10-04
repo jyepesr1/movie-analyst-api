@@ -29,6 +29,11 @@ jobs:
           project: '${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-container'
           target-file: Dockerfile
           token-variable: SNYK_TOKEN
+      - snyk/scan:
+          fail-on-issues: false
+          monitor-on-build: true
+          project: '${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app'
+          token-variable: SNYK_TOKEN
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}

@@ -53,4 +53,4 @@ workflows:
   main:
     jobs:
       - app-build
-        context: snyk
+          context: snyk

@@ -52,5 +52,5 @@ workflows:
   version: 2.1
   main:
     jobs:
-      - app-build
+      - app-build:
           context: snyk

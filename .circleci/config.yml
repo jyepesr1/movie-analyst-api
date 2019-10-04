@@ -11,6 +11,7 @@ jobs:
   scan_image:
     executor: anchore/anchore_engine
     steps:
+      - setup_remote_docker
       - checkout
       - run:
           name: Build container
@@ -19,7 +20,7 @@ jobs:
           dockerfile_path: ./Dockerfile
           image_name: ${CIRCLE_PROJECT_REPONAME}:dev
           timeout: '500'
-          policy_failure: True  
+          policy_failure: true  
       - persist_to_workspace:
           root: .
           paths:

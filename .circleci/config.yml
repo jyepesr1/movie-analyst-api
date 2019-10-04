@@ -49,12 +49,7 @@ jobs:
           name: Save Yarn Package Cache
           key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
-            - ~/.cache/yarn
-      - snyk/scan:
-          fail-on-issues: false
-          monitor-on-build: true
-          project: '${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app'
-          token-variable: SNYK_TOKEN         
+            - ~/.cache/yarn        
       - run: 
           name: Run tests
           command: yarn test
@@ -67,8 +62,6 @@ workflows:
   main:
     jobs:
       - scan_image:
-          context: snyk
       - app-build:
           requires:
             - scan_image
-          context: snyk

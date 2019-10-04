@@ -29,6 +29,6 @@ jobs:
           command: yarn test
       - run: 
           name: Create the artifact
-          command: zip -r movie_analyst-api-${CIRCLE_SHA1}.zip ~/movie-analyst-api
+          command: zip -r /tmp/movie_analyst-api-${CIRCLE_SHA1}.zip ~/movie-analyst-api
       - store_artifacts:
-          path: movie_analyst-api-${CIRCLE_SHA1}.zip
+          path: /tmp/movie_analyst-api-${CIRCLE_SHA1}.zip

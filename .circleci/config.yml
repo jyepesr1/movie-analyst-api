@@ -6,20 +6,20 @@ version: 2.1
 
 orbs:
   snyk: snyk/snyk@0.0.8
-  clair_scanner: ovotech/clair-scanner@1.5.0
 
 jobs:
   scan_image:
-    executor: clair_scanner/default
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:12.10
     environment:
       IMAGE_NAME: movie-analyst/api
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Build Docker image
           command: docker build -t $IMAGE_NAME:latest .
-      - clair_scanner/scan:
-          image: $IMAGE_NAME:latest
       - snyk/scan:
           docker-image-name: '$IMAGE_NAME:latest'
           fail-on-issues: false

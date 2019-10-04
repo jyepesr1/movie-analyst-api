@@ -13,8 +13,8 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Build container
-        command: docker build -t ${CIRCLE_PROJECT_REPONAME}:dev .
+          name: Build container
+          command: docker build -t ${CIRCLE_PROJECT_REPONAME}:dev .
       - anchore/analyze_local_image:
           dockerfile_path: ./Dockerfile
           image_name: ${CIRCLE_PROJECT_REPONAME}:dev

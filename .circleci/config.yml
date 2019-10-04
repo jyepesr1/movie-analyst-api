@@ -61,7 +61,7 @@ workflows:
   version: 2.1
   main:
     jobs:
-      - scan_image:
+      - scan_image
       - app-build:
           requires:
             - scan_image

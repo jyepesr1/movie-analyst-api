@@ -59,8 +59,8 @@ jobs:
       - run: 
           name: Create the artifact
           command: |
-          mkdir /tmp/artifact
-          zip -r /tmp/artifact/${CIRCLE_PROJECT_REPONAME}-${CIRCLE_SHA1}.zip node_modules/ server.js package.json yarn.lock
+            mkdir /tmp/artifact
+            zip -r /tmp/artifact/${CIRCLE_PROJECT_REPONAME}-${CIRCLE_SHA1}.zip node_modules/ server.js package.json yarn.lock
       - store_artifacts:
           path: /tmp/artifact
 

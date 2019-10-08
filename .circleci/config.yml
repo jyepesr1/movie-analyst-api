@@ -22,7 +22,10 @@ jobs:
           dockerfile_path: ./Dockerfile
           image_name: ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
           timeout: '500'
-          policy_failure: false  
+          policy_failure: false
+      - anchore/parse_reports
+      - store_artifacts:
+          path: anchore-reports
       - persist_to_workspace:
           root: .
           paths:
@@ -59,10 +62,11 @@ jobs:
       - run: 
           name: Create the artifact
           command: |
-            mkdir /tmp/artifact
+            mkdir /tmp/bundle
             zip -r /tmp/artifact/${CIRCLE_PROJECT_REPONAME}-${CIRCLE_SHA1}.zip node_modules/ server.js package.json yarn.lock
       - store_artifacts:
-          path: /tmp/artifact
+          path: /tmp/bundle
+          root: bundle
 
 workflows:
   version: 2.1

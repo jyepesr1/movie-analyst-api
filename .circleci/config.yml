@@ -26,6 +26,7 @@ jobs:
       - anchore/parse_reports
       - store_artifacts:
           path: anchore-reports
+          destination: anchore-reports
       - persist_to_workspace:
           root: .
           paths:
@@ -63,10 +64,10 @@ jobs:
           name: Create the artifact
           command: |
             mkdir /tmp/bundle
-            zip -r /tmp/artifact/${CIRCLE_PROJECT_REPONAME}-${CIRCLE_SHA1}.zip node_modules/ server.js package.json yarn.lock
+            zip -r /tmp/bundle/${CIRCLE_PROJECT_REPONAME}-${CIRCLE_SHA1}.zip node_modules/ server.js package.json yarn.lock
       - store_artifacts:
           path: /tmp/bundle
-          root: bundle
+          destination: bundle
 
 workflows:
   version: 2.1

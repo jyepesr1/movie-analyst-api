@@ -2,17 +2,16 @@
 var express = require('express');
 var app = express();
 var request = require('superagent');
-var dotenv = require('dotenv');
-dotenv.config();
+var secrets = require('./secrets');
 var mysql = require("mysql");
 var pool = mysql.createPool({
   connectionLimit : 100,
-  host     : process.env.DB_HOST || 'mysql-test.cxrpknmq0hfi.us-west-2.rds.amazonaws.com',
-  user     : process.env.DB_USER || 'applicationuser',
-  password : process.env.DB_PASS || 'applicationuser',
-  database : process.env.DB_NAME || 'movie_db'
+  host     : secrets.get("DB_HOST") || process.env.DB_HOST,
+  user     : secrets.get("DB_USER") || process.env.DB_USER,
+  password : secrets.get("DB_PASS") || process.env.DB_PASS,
+  database : secrets.get("DB_NAME") || process.env.DB_NAME
 });
-
+ 
 /* connection.connect((err) => {
   if(err){
     console.log('Error connecting to Db');
@@ -25,6 +24,7 @@ var pool = mysql.createPool({
 function getMovies(callback) {    
   pool.query("SELECT * FROM movie_db.moviereview",
     function (err, rows) {
+      console.log(rows)
       callback(err, rows); 
     }
   );    

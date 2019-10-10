@@ -8,7 +8,7 @@ orbs:
   anchore: anchore/anchore-engine@1.6.0
 
 jobs:
-  build_scan_push_image:
+  scan_image:
     executor: anchore/anchore_engine
     steps:
       - setup_remote_docker
@@ -28,12 +28,21 @@ jobs:
       - store_artifacts:
           path: anchore-reports
           destination: anchore-reports
+
+  build_push_image:
+    machine: true
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+          at: ./
       - run:
-          name: Login to docker Hub and Push image
+          name: Build and Push image
           command: |
+            docker build -t ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH} .
             echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
             docker push ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
-  deploy:
+  
+  deploy-prod:
     machine:
       enabled: true
     steps:
@@ -88,11 +97,22 @@ workflows:
   main:
     jobs:
       - app-build
-      - build_scan_push_image:
+      - scan_image:
           requires:
             - app-build
-      - deploy:
+          filters:
+            branches:
+              only: master
+      - build_push_image:
           requires:
             - app-build
-            - build_scan_push_image
+            - scan_image
+      - deploy-prod:
+          requires:
+            - app-build
+            - scan_image
+            - build_push_image
+          filters:
+            branches:
+              only: master
 

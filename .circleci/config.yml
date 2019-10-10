@@ -43,7 +43,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST "eval \$(docker-machine env dvc1) && docker service update --image ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}"
+            ssh $SSH_USER@$SSH_HOST "eval \$(docker-machine env dvc1) && docker service update --image ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH} movie-app_movies-api"
 
   app-build:
     docker:

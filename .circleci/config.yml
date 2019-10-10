@@ -32,7 +32,6 @@ jobs:
   build_push_image:
     machine: true
     steps:
-      - setup_remote_docker
       - attach_workspace:
           at: ./
       - run:

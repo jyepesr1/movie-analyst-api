@@ -8,42 +8,50 @@ orbs:
   anchore: anchore/anchore-engine@1.6.0
 
 jobs:
-  scan_image:
+  build_scan_push_image:
     executor: anchore/anchore_engine
     steps:
       - setup_remote_docker
-      - checkout
+      - attach_workspace:
+          at: ./
       - run:
           name: Build container
           command: |
             apk add --update-cache --upgrade curl
-            docker build -t ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH} .
+            docker build -t ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH} .
       - anchore/analyze_local_image:
           dockerfile_path: ./Dockerfile
-          image_name: ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
+          image_name: ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
           timeout: '500'
           policy_failure: false
       - anchore/parse_reports
       - store_artifacts:
           path: anchore-reports
           destination: anchore-reports
-      - persist_to_workspace:
-          root: .
-          paths:
-            - server.js 
-            - package.json
-            - test/*
-            - yarn.lock
+      - run:
+          name: Login to docker Hub and Push image
+          command: |
+            docker login --username ${DOCKER_USERNAME} --password ${DOCKER_PASS}
+            docker push ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "30:48:49:d1:14:43:aa:3b:cf:3b:0c:95:20:11:c5:e7"
+      - run:
+        name: Deploy Over SSH
+        command: |
+          ssh $SSH_USER@$SSH_HOST "eval \$(docker-machine env dvc1) && docker service update --image ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}"
+
   app-build:
     docker:
       # specify the version you desire here
       - image: circleci/node:12.10
     working_directory: ~/movie-analyst-api
-    environment:
-      IMAGE_NAME: movie-analyst/api
     steps:
-      - attach_workspace:
-          at: .
+      - checkout
       # Download and cache dependencies
       - restore_cache:
           name: Restore Yarn Package Cache
@@ -60,20 +68,33 @@ jobs:
       - run: 
           name: Run tests
           command: yarn test
-      - run: 
-          name: Create the artifact
-          command: |
-            mkdir /tmp/bundle
-            zip -r /tmp/bundle/${CIRCLE_PROJECT_REPONAME}-${CIRCLE_SHA1}.zip node_modules/ server.js package.json yarn.lock
-      - store_artifacts:
-          path: /tmp/bundle
-          destination: bundle
+      - persist_to_workspace:
+          root: .
+          paths:
+            - server.js 
+            - secrets.js
+            - package.json
+            - Dockerfile
+            - yarn.lock
+#      - run: 
+#          name: Create the artifact
+#          command: |
+#            mkdir /tmp/bundle
+#            zip -r /tmp/bundle/${CIRCLE_PROJECT_REPONAME}-${CIRCLE_SHA1}.zip node_modules/ server.js package.json yarn.lock
+#      - store_artifacts:
+#          path: /tmp/bundle
+#          destination: bundle
 
 workflows:
   version: 2.1
   main:
     jobs:
-      - scan_image
-      - app-build:
+      - app-build
+      - build_scan_push_image:
           requires:
             - scan_image
+      - deploy:
+          requires:
+            - app-build
+            - build_scan_push_image
+            

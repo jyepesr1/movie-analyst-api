@@ -92,7 +92,7 @@ workflows:
       - app-build
       - build_scan_push_image:
           requires:
-            - scan_image
+            - app-build
       - deploy:
           requires:
             - app-build

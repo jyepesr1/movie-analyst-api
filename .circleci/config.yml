@@ -11,8 +11,7 @@ jobs:
   build_scan_push_image:
     executor: anchore/anchore_engine
     steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - setup_remote_docker
       - attach_workspace:
           at: ./
       - run:

@@ -103,7 +103,7 @@ app.get('/pending', function(req, res){
 
 app.get('/info', function(req, res){
   request
-    .get('http://169.254.169.254/latest/meta-data/local-ipv4')
+    .get('http://169.254.169.254/latest/meta-data/mac')
     .end(function(err, data) {
       if(data.status == 403){
         res.send(403, '403 Forbidden');

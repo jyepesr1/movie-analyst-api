@@ -11,7 +11,8 @@ jobs:
   build_scan_push_image:
     executor: anchore/anchore_engine
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - attach_workspace:
           at: ./
       - run:
@@ -31,7 +32,7 @@ jobs:
       - run:
           name: Login to docker Hub and Push image
           command: |
-            docker login --username ${DOCKER_USERNAME} --password ${DOCKER_PASS}
+            echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
             docker push ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
   deploy:
     machine:

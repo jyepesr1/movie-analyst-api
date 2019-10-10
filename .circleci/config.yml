@@ -49,7 +49,7 @@ jobs:
           fingerprints:
             - "30:48:49:d1:14:43:aa:3b:cf:3b:0c:95:20:11:c5:e7"
       - run:
-          name: Deploy Over SSH
+          name: Update Docker Swarm over SSH
           command: |
             ssh $SSH_USER@$SSH_HOST "eval \$(docker-machine env dvc1) && docker service update --image ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH} movie-app_movies-api"
 

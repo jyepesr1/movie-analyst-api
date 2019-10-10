@@ -19,15 +19,15 @@ jobs:
           command: |
             apk add --update-cache --upgrade curl
             docker build -t ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH} .
-#      - anchore/analyze_local_image:
-#          dockerfile_path: ./Dockerfile
-#          image_name: ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
-#          timeout: '500'
-#          policy_failure: false
-#      - anchore/parse_reports
-#      - store_artifacts:
-#          path: anchore-reports
-#          destination: anchore-reports
+      - anchore/analyze_local_image:
+          dockerfile_path: ./Dockerfile
+          image_name: ${CIRCLE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}
+          timeout: '500'
+          policy_failure: false
+      - anchore/parse_reports
+      - store_artifacts:
+          path: anchore-reports
+          destination: anchore-reports
       - run:
           name: Login to docker Hub and Push image
           command: |
@@ -47,12 +47,10 @@ jobs:
 
   app-build:
     docker:
-      # specify the version you desire here
       - image: circleci/node:12.10
     working_directory: ~/movie-analyst-api
     steps:
       - checkout
-      # Download and cache dependencies
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
